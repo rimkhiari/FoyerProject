@@ -155,6 +155,9 @@
                 <version>3.3.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>properties</nonFilteredFileExtension> <!-- Empêche le filtrage des fichiers .properties -->
+                    </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
             <plugin>
@@ -217,6 +220,16 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering> <!-- Désactiver le filtrage -->
+            </resource>
+            <resource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering> <!-- Désactiver le filtrage -->
+            </resource>
+        </resources>
     </build>
 
 </project>
