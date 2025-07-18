@@ -10,7 +10,7 @@
     </parent>
     <groupId>tn.esprit.spring</groupId>
     <artifactId>Foyer</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <name>Foyer</name>
     <description>Foyer</description>
     <url/>
@@ -39,24 +39,19 @@
 
 
     </properties>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2022.0.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nexus-snapshots</id> <!-- doit être exactement le même que dans settings.xml -->
+            <url>http://localhost:9010/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <dependencies>
-        <!--        <dependency>-->
-        <!--            <groupId>nl.altindag</groupId>-->
-        <!--            <artifactId>log-captor</artifactId>-->
-        <!--            <version>2.7.3</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>nl.altindag</groupId>-->
+<!--            <artifactId>log-captor</artifactId>-->
+<!--            <version>2.7.3</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>uk.org.lidalia</groupId>
             <artifactId>slf4j-test</artifactId>
@@ -119,14 +114,14 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.1.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
     </dependencies>
 
@@ -159,6 +154,17 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>properties</nonFilteredFileExtension> <!-- Empêche le filtrage des fichiers .properties -->
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.8</version>
@@ -169,13 +175,17 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+
+                    <!-- Génére le rapport XML pendant la phase verify -->
                     <execution>
                         <id>default-report</id>
-                        <phase>prepare-package</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                     </execution>
+
+                    <!-- Optionnel : vérifie un seuil minimum de couverture -->
                     <execution>
                         <id>jacoco-check</id>
                         <goals>
@@ -198,9 +208,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
                 </configuration>
-            </plugin>
-            <plugin>
+            </plugin>            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M7</version> <!-- Updated version -->
@@ -213,6 +223,16 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering> <!-- Désactiver le filtrage -->
+            </resource>
+            <resource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering> <!-- Désactiver le filtrage -->
+            </resource>
+        </resources>
     </build>
 
 </project>
